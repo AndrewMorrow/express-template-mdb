@@ -6,6 +6,7 @@ import connectDB from "./config/db.js";
 import passport from "passport";
 import passConfig from "./config/passport.js";
 // Routes
+import authRoutes from "./routes/auth.js";
 
 dotenv.config();
 
@@ -28,6 +29,9 @@ passConfig(passport);
 const requiresAuth = passport.authenticate("jwt", { session: false });
 
 // Routes
+
+// register and login routes
+app.use("/api/auth", authRoutes);
 
 // For production, serve compiled React app in client build directory.
 if (process.env.NODE_ENV === "production") {
