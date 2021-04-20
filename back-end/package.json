@@ -1,6 +1,10 @@
 {
     "name": "express-server",
     "version": "1.0.0",
+    "engines": {
+        "node": "14.x"
+    },
+    "type": "module",
     "description": "template for a basic react express server with authentication",
     "main": "server.js",
     "scripts": {
