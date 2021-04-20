@@ -11,6 +11,9 @@ dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 
+// connect to mongoDB
+connectDB();
+
 const app = express();
 
 // middleware
