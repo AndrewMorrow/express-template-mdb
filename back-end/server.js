@@ -1,28 +1,32 @@
 import dotenv from "dotenv";
 import path from "path";
 import express from "express";
+// import mongo connection
 import connectDB from "./config/db.js";
+
 // Middleware packages
 import passport from "passport";
 import passConfig from "./config/passport.js";
-// Routes
+
+// Route Imports
 import authRoutes from "./routes/auth.js";
 
+// Initialize dotenv
 dotenv.config();
-
-const PORT = process.env.PORT || 5000;
 
 // connect to mongoDB
 connectDB();
 
+// Initialize express
 const app = express();
+
+const PORT = process.env.PORT || 5000;
 
 // middleware
 app.use(express.json());
 
 // Passport JWT setup
 app.use(passport.initialize());
-// app.use(passport.session());
 passConfig(passport);
 
 // Middleware to use when routes require authenticated user.

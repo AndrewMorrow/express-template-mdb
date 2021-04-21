@@ -1,3 +1,4 @@
+// Validate Register Info
 export default function validateRegisterInput(data) {
     let errors = {};
 

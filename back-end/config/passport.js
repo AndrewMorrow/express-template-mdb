@@ -10,6 +10,7 @@ const opts = {
     secretOrKey: process.env.JWT_SECRET,
 };
 
+// setup passport with JWT strategy
 export default (passport) => {
     passport.use(
         new JwtStrategy(opts, (jwt_payload, done) => {

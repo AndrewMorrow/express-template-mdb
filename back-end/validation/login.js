@@ -1,3 +1,4 @@
+// Validate Login Info
 export default function validateLoginInput(data) {
     let errors = {};
 

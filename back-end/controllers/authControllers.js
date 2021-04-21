@@ -5,6 +5,9 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 
+// @Desc    Register new user
+// @Route   /api/auth/register
+// @Access  Public
 export const register = (req, res) => {
     const { errors, isValid } = validateRegisterInput(req.body);
 
@@ -72,6 +75,9 @@ export const register = (req, res) => {
     });
 };
 
+// @Desc    Login existing user
+// @Route   /api/auth/login
+// @Access  Public
 export const login = (req, res) => {
     const { errors, isValid } = validateLoginInput(req.body);
 
