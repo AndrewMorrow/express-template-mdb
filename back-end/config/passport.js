@@ -1,7 +1,6 @@
 import PassportJwt from "passport-jwt";
 const JwtStrategy = PassportJwt.Strategy;
 const ExtractJwt = PassportJwt.ExtractJwt;
-import mongoose from "mongoose";
 import User from "../models/UserModel.js";
 import dotenv from "dotenv";
 dotenv.config();
@@ -22,7 +21,9 @@ export default (passport) => {
 
                     return done(user, false);
                 })
-                .catch((err) => {});
+                .catch((err) => {
+                    return err;
+                });
         })
     );
 };

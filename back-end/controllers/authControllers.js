@@ -1,11 +1,15 @@
-export const test = (req, res) => {
-    res.status(200).json({ message: "THis is a test" });
-};
+import validateRegisterInput from "../validation/register.js";
+import User from "../models/UserModel.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 
 export const register = (req, res) => {
-    validateRegisterInput(req.body);
+    const { errors, isValid } = validateRegisterInput(req.body);
 
-    const name = req.body.name;
+    const firstName = req.body.firstName;
+    const lastName = req.body.lastName;
     const email = req.body.email;
     const password = req.body.password;
 
@@ -13,26 +17,30 @@ export const register = (req, res) => {
         if (user) {
             return res.status(400).json({ email: "Email already exists" });
         }
+        if (!isValid) {
+            return res.status(400).json(errors);
+        }
 
         const newUser = new User({
-            name,
+            firstName,
+            lastName,
             email,
             password,
         });
 
-        bcrypt.genSalt(20, (err, salt) => {
+        bcrypt.genSalt(10, (err, salt) => {
             bcrypt.hash(newUser.password, salt, (err, hash) => {
                 if (err) {
                     throw err;
                 }
-
                 newUser.password = hash;
                 newUser
                     .save()
                     .then((user) => {
                         const payload = {
                             id: user.id,
-                            name: user.name,
+                            firstName: user.firstName,
+                            lastName: user.lastName,
                         };
                         // sign token once registered
                         jwt.sign(
@@ -46,8 +54,9 @@ export const register = (req, res) => {
                                             "There was a problem updating your security token",
                                     });
                                 }
+
                                 user.password = undefined;
-                                return res.json({
+                                res.json({
                                     success: true,
                                     token: `Bearer ${token}`,
                                     user,
@@ -55,7 +64,9 @@ export const register = (req, res) => {
                             }
                         );
                     })
-                    .catch((err) => {});
+                    .catch((err) => {
+                        return res.status(500).json({ message: err });
+                    });
             });
         });
     });
