@@ -1,3 +1,7 @@
+export const test = (req, res) => {
+    res.status(200).json({ message: "THis is a test" });
+};
+
 export const register = (req, res) => {
     validateRegisterInput(req.body);
 
