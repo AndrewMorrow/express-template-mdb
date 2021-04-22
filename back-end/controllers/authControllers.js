@@ -1,7 +1,7 @@
 import validateRegisterInput from "../validation/register.js";
 import validateLoginInput from "../validation/login.js";
 import User from "../models/UserModel.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();

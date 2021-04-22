@@ -19,7 +19,7 @@ export default function validateRegisterInput(data) {
     if (!data.password) {
         errors.password = "Password field is required";
     } else if (!data.password2) {
-        errors.password = "Please re-enter your password";
+        errors.password2 = "Please re-enter your password";
     } else if (data.password.length < 8 || data.password.length > 20) {
         errors.password = "Password must be between 8 and 20 characters";
     } else if (data.password !== data.password2) {

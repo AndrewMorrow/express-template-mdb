@@ -8,13 +8,20 @@
     "description": "template for a basic react express server with authentication",
     "main": "server.js",
     "scripts": {
-        "start": "nodemon server.js"
+        "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev",
+        "start:prod": "node server.js",
+        "start:dev": "concurrently \"nodemon --ignore 'client/*'\" \"npm run client\"",
+        "client": "cd client && npm start",
+        "lint": "eslint --fix --ext .js,.jsx .",
+        "data:import": "node seeder",
+        "data:destroy": "node seeder -d"
     },
     "keywords": [],
     "author": "Andrew Morrow",
     "license": "ISC",
     "dependencies": {
-        "bcrypt": "^5.0.1",
+        "axios": "^0.21.1",
+        "bcryptjs": "^2.4.3",
         "express": "^4.17.1",
         "jsonwebtoken": "^8.5.1",
         "mongoose": "^5.12.5",
@@ -22,6 +29,7 @@
         "passport-jwt": "^4.0.0"
     },
     "devDependencies": {
+        "concurrently": "^6.0.2",
         "dotenv": "^8.2.0",
         "nodemon": "^2.0.7"
     }
