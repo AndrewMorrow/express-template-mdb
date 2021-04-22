@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import dotenv from "dotenv";
 import users from "./data/userSeeds.js";
 import User from "./models/UserModel.js";
@@ -10,11 +9,9 @@ connectDB();
 
 const importData = async () => {
     try {
-        await User.deleteMany();
-
-        const createdUsers = await User.insertMany(users);
-
-        const adminUser = createdUsers[0]._id;
+        // await User.deleteMany();
+        console.log("Data Started");
+        await User.insertMany(users);
 
         console.log("Data Imported");
         process.exit();
