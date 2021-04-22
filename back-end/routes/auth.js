@@ -1,4 +1,5 @@
 import { login, register } from "../controllers/authControllers.js";
+import { catchError } from "../middleware/customErrorHandler.js";
 
 const authRoutes = (app) => {
     // @Desc    Register new user
@@ -7,7 +8,7 @@ const authRoutes = (app) => {
 
     // @Desc    Login existing user
     // @Access  Public
-    app.route("/api/auth/login").post(login);
+    app.route("/api/auth/login").post(catchError(login));
 };
 
 export default authRoutes;

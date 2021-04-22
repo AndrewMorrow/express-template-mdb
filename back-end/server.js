@@ -1,12 +1,14 @@
 import dotenv from "dotenv";
 import path from "path";
 import express from "express";
+
 // import mongo connection
 import connectDB from "./config/db.js";
 
 // Middleware packages
 import passport from "passport";
 import passConfig from "./config/passport.js";
+import { notFound, errorHandler } from "./middleware/customErrorHandler.js";
 
 // Route Imports
 import authRoutes from "./routes/auth.js";
@@ -43,6 +45,10 @@ if (process.env.NODE_ENV === "production") {
         res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
     });
 }
+
+// Custom Error Handlers
+app.use(notFound);
+app.use(errorHandler);
 
 app.listen(PORT, () => {
     console.log(`Server is listening at http://localhost:${PORT}`);

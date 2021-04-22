@@ -1,4 +1,5 @@
 import validateRegisterInput from "../validation/register.js";
+import validateLoginInput from "../validation/login.js";
 import User from "../models/UserModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -31,7 +32,7 @@ export const register = (req, res) => {
             password,
         });
 
-        bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.genSalt(20, (err, salt) => {
             bcrypt.hash(newUser.password, salt, (err, hash) => {
                 if (err) {
                     throw err;
@@ -78,7 +79,7 @@ export const register = (req, res) => {
 // @Desc    Login existing user
 // @Route   /api/auth/login
 // @Access  Public
-export const login = (req, res) => {
+export const login = async (req, res) => {
     const { errors, isValid } = validateLoginInput(req.body);
 
     if (!isValid) {
@@ -88,43 +89,37 @@ export const login = (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
 
-    User.findOne({ email }).then((user) => {
-        if (!user) {
-            return res
-                .status(401)
-                .json({ message: "Invalid email or password" });
-        }
+    const user = await User.findOne({ email });
+    if (!user) {
+        return res.status(401).json({ message: "Invalid email or password" });
+    }
 
-        bcrypt.compare(password, user.password).then((isMatch) => {
-            if (!isMatch) {
-                return res
-                    .status(401)
-                    .json({ message: "Invalid email or password" });
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+        return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    const payload = {
+        id: user.id,
+        name: user.name,
+    };
+
+    jwt.sign(
+        payload,
+        process.env.JWT_SECRET,
+        { expiresIn: 31556926 },
+        (err, token) => {
+            if (err) {
+                return res.status(400).json({
+                    tokenerror:
+                        "There was a problem updating your security token",
+                });
             }
 
-            const payload = {
-                id: user.id,
-                name: user.name,
-            };
-
-            jwt.sign(
-                payload,
-                process.env.JWT_SECRET,
-                { expiresIn: 31556926 },
-                (err, token) => {
-                    if (err) {
-                        return res.status(400).json({
-                            tokenerror:
-                                "There was a problem updating your security token",
-                        });
-                    }
-
-                    return res.json({
-                        success: true,
-                        token: `Bearer ${token}`,
-                    });
-                }
-            );
-        });
-    });
+            return res.json({
+                success: true,
+                token: `Bearer ${token}`,
+            });
+        }
+    );
 };
