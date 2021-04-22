@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import path from "path";
 import express from "express";
+import logger from "morgan";
 
 // import mongo connection
 import connectDB from "./config/db.js";
@@ -26,6 +27,7 @@ const PORT = process.env.PORT || 5000;
 
 // middleware
 app.use(express.json());
+app.use(logger("dev"));
 
 // Passport JWT setup
 app.use(passport.initialize());

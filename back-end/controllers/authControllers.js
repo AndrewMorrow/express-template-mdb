@@ -32,7 +32,7 @@ export const register = (req, res) => {
             password,
         });
 
-        bcrypt.genSalt(20, (err, salt) => {
+        bcrypt.genSalt(12, (err, salt) => {
             bcrypt.hash(newUser.password, salt, (err, hash) => {
                 if (err) {
                     throw err;
