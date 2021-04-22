@@ -15,7 +15,9 @@ import { notFound, errorHandler } from "./middleware/customErrorHandler.js";
 import authRoutes from "./routes/auth.js";
 
 // Initialize dotenv
-dotenv.config();
+if (process.env.NODE_ENV !== "production") {
+    dotenv.config();
+}
 
 // connect to mongoDB
 connectDB();
@@ -27,6 +29,7 @@ const PORT = process.env.PORT || 5000;
 
 // middleware
 app.use(express.json());
+app.use(express.urlencoded()); //Parse URL-encoded bodies
 app.use(logger("dev"));
 
 // Passport JWT setup
