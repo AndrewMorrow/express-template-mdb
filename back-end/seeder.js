@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
-import users from "./data/userSeeds.js";
-import User from "./models/UserModel.js";
+import users from "./data/user.seeds.js";
+import User from "./models/User.model.js";
 import connectDB from "./config/db.js";
 
 dotenv.config();

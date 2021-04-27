@@ -1,6 +1,6 @@
 import validateRegisterInput from "../validation/register.js";
 import validateLoginInput from "../validation/login.js";
-import User from "../models/UserModel.js";
+import User from "../models/User.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
@@ -32,47 +32,40 @@ export const register = (req, res) => {
             password,
         });
 
-        bcrypt.genSalt(12, (err, salt) => {
-            bcrypt.hash(newUser.password, salt, (err, hash) => {
-                if (err) {
-                    throw err;
-                }
-                newUser.password = hash;
-                newUser
-                    .save()
-                    .then((user) => {
-                        const payload = {
-                            id: user.id,
-                            firstName: user.firstName,
-                            lastName: user.lastName,
-                        };
-                        // sign token once registered
-                        jwt.sign(
-                            payload,
-                            process.env.JWT_SECRET,
-                            { expiresIn: 31556926 },
-                            (err, token) => {
-                                if (err) {
-                                    return res.status(400).json({
-                                        tokenerror:
-                                            "There was a problem updating your security token",
-                                    });
-                                }
+        newUser.password = hash;
+        newUser
+            .save()
+            .then((user) => {
+                const payload = {
+                    id: user.id,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                };
+                // sign token once registered
+                jwt.sign(
+                    payload,
+                    process.env.JWT_SECRET,
+                    { expiresIn: 31556926 },
+                    (err, token) => {
+                        if (err) {
+                            return res.status(400).json({
+                                tokenerror:
+                                    "There was a problem updating your security token",
+                            });
+                        }
 
-                                user.password = undefined;
-                                res.json({
-                                    success: true,
-                                    token: `Bearer ${token}`,
-                                    user,
-                                });
-                            }
-                        );
-                    })
-                    .catch((err) => {
-                        return res.status(500).json({ message: err });
-                    });
+                        user.password = undefined;
+                        res.json({
+                            success: true,
+                            token: `Bearer ${token}`,
+                            user,
+                        });
+                    }
+                );
+            })
+            .catch((err) => {
+                return res.status(500).json({ message: err });
             });
-        });
     });
 };
 
