@@ -4,6 +4,10 @@ import User from "../models/User.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import Token from "../models/Token.model.js";
+import sendEmail from "../utils/email/sendEmail.js";
+import crypto from "crypto";
+const bcryptSalt = process.env.BCRYPT_SALT;
 dotenv.config();
 
 // @Desc    Register new user
@@ -114,4 +118,29 @@ export const login = async (req, res) => {
             });
         }
     );
+};
+
+const requestPasswordReset = async (email) => {
+    const user = await User.findOne({ email });
+
+    if (!user) throw new Error("User does not exist");
+    let token = await Token.findOne({ userId: user._id });
+    if (token) await token.deleteOne();
+    let resetToken = crypto.randomBytes(32).toString("hex");
+    const hash = await bcrypt.hash(resetToken, Number(bcryptSalt));
+
+    await new Token({
+        userId: user._id,
+        token: hash,
+        createdAt: Date.now(),
+    }).save();
+
+    const link = `${clientURL}/passwordReset?token=${resetToken}&id=${user._id}`;
+    sendEmail(
+        user.email,
+        "Password Reset Request",
+        { name: user.name, link: link },
+        "./template/requestResetPassword.handlebars"
+    );
+    return link;
 };
