@@ -1,7 +1,7 @@
 import PassportJwt from "passport-jwt";
 const JwtStrategy = PassportJwt.Strategy;
 const ExtractJwt = PassportJwt.ExtractJwt;
-import User from "../models/UserModel.js";
+import User from "../models/User.model.js";
 import dotenv from "dotenv";
 dotenv.config();
 

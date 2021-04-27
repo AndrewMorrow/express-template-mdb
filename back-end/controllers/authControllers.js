@@ -32,7 +32,6 @@ export const register = (req, res) => {
             password,
         });
 
-        newUser.password = hash;
         newUser
             .save()
             .then((user) => {
