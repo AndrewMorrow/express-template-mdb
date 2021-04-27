@@ -9,6 +9,10 @@ const authRoutes = (app) => {
     // @Desc    Login existing user
     // @Access  Public
     app.route("/api/auth/login").post(catchError(login));
+
+    // @Desc    Reset existing user password
+    // @Access  Public
+    app.route("/api/auth/service/reset").post(catchError(login));
 };
 
 export default authRoutes;
