@@ -24,6 +24,7 @@
         "bcryptjs": "^2.4.3",
         "crypto": "^1.0.1",
         "express": "^4.17.1",
+        "handlebars": "^4.7.7",
         "if-env": "^1.0.4",
         "jsonwebtoken": "^8.5.1",
         "mongoose": "^5.12.5",

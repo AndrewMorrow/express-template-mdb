@@ -1,4 +1,9 @@
-import { login, register } from "../controllers/authControllers.js";
+import {
+    login,
+    register,
+    requestPasswordReset,
+    resetPassword,
+} from "../controllers/authControllers.js";
 import { catchError } from "../middleware/customErrorHandler.js";
 
 const authRoutes = (app) => {
@@ -12,7 +17,13 @@ const authRoutes = (app) => {
 
     // @Desc    Reset existing user password
     // @Access  Public
-    app.route("/api/auth/service/reset").post(catchError(login));
+    app.route("/api/auth/service/reset").post(catchError(resetPassword));
+
+    // @Desc    Request user password reset
+    // @Access  Public
+    app.route("/api/auth/service/requestReset").post(
+        catchError(requestPasswordReset)
+    );
 };
 
 export default authRoutes;
