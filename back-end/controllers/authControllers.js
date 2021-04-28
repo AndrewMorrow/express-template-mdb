@@ -120,7 +120,8 @@ export const login = async (req, res) => {
     );
 };
 
-export const requestPasswordReset = async (email) => {
+export const requestPasswordReset = async (req, res) => {
+    const email = req.body.email;
     const user = await User.findOne({ email });
 
     if (!user) throw new Error("User does not exist");
@@ -142,10 +143,14 @@ export const requestPasswordReset = async (email) => {
         { name: user.name, link: link },
         "./template/requestResetPassword.handlebars"
     );
-    return link;
+
+    res.json(link);
 };
 
-export const resetPassword = async (userId, token, password) => {
+export const resetPassword = async (req, res) => {
+    const userId = req.body.user;
+    const token = req.body.token;
+    const password = req.body.password;
     let passwordResetToken = await Token.findOne({ userId });
     if (!passwordResetToken) {
         throw new Error("Invalid or expired password reset token");
@@ -170,5 +175,5 @@ export const resetPassword = async (userId, token, password) => {
         "./template/resetPassword.handlebars"
     );
     await passwordResetToken.deleteOne();
-    return true;
+    res.json(true);
 };
