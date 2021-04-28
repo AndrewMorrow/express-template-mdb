@@ -1,7 +1,7 @@
-const nodemailer = require("nodemailer");
-const handlebars = require("handlebars");
-const fs = require("fs");
-const path = require("path");
+import nodemailer from "nodemailer";
+import handlebars from "handlebars";
+import fs from "fs";
+import path from "path";
 
 const sendEmail = async (email, subject, payload, template) => {
     try {
@@ -52,4 +52,4 @@ sendEmail(
 );
 */
 
-module.exports = sendEmail;
+export default sendEmail;
