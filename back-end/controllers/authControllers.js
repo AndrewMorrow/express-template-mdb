@@ -167,20 +167,28 @@ export const resetPassword = async (req, res) => {
     const userId = req.body.user;
     const token = req.body.token;
     const password = req.body.password;
+
+    // check for password token
     let passwordResetToken = await Token.findOne({ userId });
     if (!passwordResetToken) {
         throw new Error("Invalid or expired password reset token");
     }
+
+    // compare token to stored token
     const isValid = await bcrypt.compare(token, passwordResetToken.token);
     if (!isValid) {
         throw new Error("Invalid or expired password reset token");
     }
+
+    // hash new password and update user
     const hash = await bcrypt.hash(password, Number(bcryptSalt));
     await User.updateOne(
         { _id: userId },
         { $set: { password: hash } },
         { new: true }
     );
+
+    // find user and send success email
     const user = await User.findById({ _id: userId });
     sendEmail(
         user.email,
