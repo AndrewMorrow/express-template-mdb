@@ -14,7 +14,7 @@ dotenv.config();
 // @Desc    Register new user
 // @Route   /api/auth/register
 // @Access  Public
-export const register = (req, res) => {
+export const register = async (req, res) => {
     const { errors, isValid } = validateRegisterInput(req.body);
 
     const firstName = req.body.firstName;
@@ -22,85 +22,34 @@ export const register = (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
 
-    User.findOne({ email }).then((user) => {
-        if (user) {
-            return res.status(400).json({ email: "Email already exists" });
-        }
-        if (!isValid) {
-            return res.status(400).json(errors);
-        }
-
-        const newUser = new User({
-            firstName,
-            lastName,
-            email,
-            password,
-        });
-
-        newUser
-            .save()
-            .then((user) => {
-                const payload = {
-                    id: user.id,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                };
-                // sign token once registered
-                jwt.sign(
-                    payload,
-                    process.env.JWT_SECRET,
-                    { expiresIn: 31556926 },
-                    (err, token) => {
-                        if (err) {
-                            return res.status(400).json({
-                                tokenerror:
-                                    "There was a problem updating your security token",
-                            });
-                        }
-
-                        user.password = undefined;
-                        res.json({
-                            success: true,
-                            token: `Bearer ${token}`,
-                            user,
-                        });
-                    }
-                );
-            })
-            .catch((err) => {
-                return res.status(500).json({ message: err });
-            });
-    });
-};
-
-// @Desc    Login existing user
-// @Route   /api/auth/login
-// @Access  Public
-export const login = async (req, res) => {
-    const { errors, isValid } = validateLoginInput(req.body);
-
+    // check db for user
+    const dbUser = await User.findOne({ email });
+    // check if user exists
+    if (dbUser) {
+        return res.status(400).json({ email: "Email already exists" });
+    }
+    // check for validation errors
     if (!isValid) {
         return res.status(400).json(errors);
     }
 
-    const email = req.body.email;
-    const password = req.body.password;
+    const newUser = new User({
+        firstName,
+        lastName,
+        email,
+        password,
+    });
 
-    const user = await User.findOne({ email });
-    if (!user) {
-        return res.status(401).json({ message: "Invalid email or password" });
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-        return res.status(401).json({ message: "Invalid email or password" });
-    }
+    // save user
+    const user = await newUser.save();
 
     const payload = {
         id: user.id,
-        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
     };
 
+    // sign token once registered
     jwt.sign(
         payload,
         process.env.JWT_SECRET,
@@ -113,6 +62,63 @@ export const login = async (req, res) => {
                 });
             }
 
+            user.password = undefined;
+
+            // send token and user info
+            res.json({
+                success: true,
+                token: `Bearer ${token}`,
+                user,
+            });
+        }
+    );
+};
+
+// @Desc    Login existing user
+// @Route   /api/auth/login
+// @Access  Public
+export const login = async (req, res) => {
+    const { errors, isValid } = validateLoginInput(req.body);
+
+    // check for validation errors
+    if (!isValid) {
+        return res.status(400).json(errors);
+    }
+
+    const email = req.body.email;
+    const password = req.body.password;
+
+    // check db for user
+    const user = await User.findOne({ email });
+    if (!user) {
+        return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    // check password against db password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+        return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    const payload = {
+        id: user.id,
+        name: user.firstName,
+    };
+
+    // sign token
+    jwt.sign(
+        payload,
+        process.env.JWT_SECRET,
+        { expiresIn: 31556926 },
+        (err, token) => {
+            if (err) {
+                return res.status(400).json({
+                    tokenerror:
+                        "There was a problem updating your security token",
+                });
+            }
+
+            // send signed token
             return res.json({
                 success: true,
                 token: `Bearer ${token}`,
@@ -123,12 +129,19 @@ export const login = async (req, res) => {
 
 export const requestPasswordReset = async (req, res) => {
     const email = req.body.email;
-    const user = await User.findOne({ email });
 
+    // check db for user
+    const user = await User.findOne({ email });
     if (!user) throw new Error("User does not exist");
+
+    // check if token already exists
     let token = await Token.findOne({ userId: user._id });
+    // delete token if exist
     if (token) await token.deleteOne();
+
+    // generate new token
     let resetToken = crypto.randomBytes(32).toString("hex");
+    // hash token before saving
     const hash = await bcrypt.hash(resetToken, Number(bcryptSalt));
 
     await new Token({
@@ -137,8 +150,9 @@ export const requestPasswordReset = async (req, res) => {
         createdAt: Date.now(),
     }).save();
 
+    // create reset link
     const link = `${clientURL}/passwordReset?token=${resetToken}&id=${user._id}`;
-    // console.log(user.email);
+
     sendEmail(
         user.email,
         "Password Reset Request",

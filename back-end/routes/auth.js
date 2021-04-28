@@ -9,7 +9,7 @@ import { catchError } from "../middleware/customErrorHandler.js";
 const authRoutes = (app) => {
     // @Desc    Register new user
     // @Access  Public
-    app.route("/api/auth/register").post(register);
+    app.route("/api/auth/register").post(catchError(register));
 
     // @Desc    Login existing user
     // @Access  Public
