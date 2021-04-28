@@ -29,7 +29,7 @@ const PORT = process.env.PORT || 5000;
 
 // middleware
 app.use(express.json());
-app.use(express.urlencoded()); //Parse URL-encoded bodies
+app.use(express.urlencoded({ extended: true })); //Parse URL-encoded bodies
 app.use(logger("dev"));
 
 // Passport JWT setup

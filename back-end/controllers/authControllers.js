@@ -8,6 +8,7 @@ import Token from "../models/Token.model.js";
 import sendEmail from "../utils/email/sendEmail.js";
 import crypto from "crypto";
 const bcryptSalt = process.env.BCRYPT_SALT;
+const clientURL = process.env.CLIENT_URL;
 dotenv.config();
 
 // @Desc    Register new user
@@ -137,10 +138,11 @@ export const requestPasswordReset = async (req, res) => {
     }).save();
 
     const link = `${clientURL}/passwordReset?token=${resetToken}&id=${user._id}`;
+    // console.log(user.email);
     sendEmail(
         user.email,
         "Password Reset Request",
-        { name: user.name, link: link },
+        { name: user.firstName, link: link },
         "./template/requestResetPassword.handlebars"
     );
 
