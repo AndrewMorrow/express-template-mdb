@@ -172,7 +172,7 @@ export const resetPassword = async (req, res) => {
         user.email,
         "Password Reset Successfully",
         {
-            name: user.name,
+            name: user.firstName,
         },
         "./template/resetPassword.handlebars"
     );
