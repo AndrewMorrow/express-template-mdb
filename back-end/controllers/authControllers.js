@@ -120,7 +120,7 @@ export const login = async (req, res) => {
     );
 };
 
-const requestPasswordReset = async (email) => {
+export const requestPasswordReset = async (email) => {
     const user = await User.findOne({ email });
 
     if (!user) throw new Error("User does not exist");
