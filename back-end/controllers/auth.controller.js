@@ -8,14 +8,8 @@ import validateRegisterInput from "../validation/register.js";
 import validateLoginInput from "../validation/login.js";
 
 const registerController = async (req, res, next) => {
-    const { errors, isValid } = await validateRegisterInput(req.body);
-    // check for validation errors
-    if (!isValid) {
-        const err = new Error("Invalid Payload");
-        err.statusCode = 422;
-        err.errors = errors;
-        throw err;
-    }
+    await validateRegisterInput(req.body);
+
     const registerService = await register(
         req.body.firstName,
         req.body.lastName,
@@ -27,10 +21,10 @@ const registerController = async (req, res, next) => {
 };
 
 const loginController = async (req, res, next) => {
-    const { errors, isValid } = await validateLoginInput(req.body);
-    if (!isValid) {
-        return res.status(400).json(errors);
-    }
+    await validateLoginInput(req.body);
+    // if (!isValid) {
+    //     return res.status(400).json(errors);
+    // }
     const loginService = await login(req.body.email, req.body.password);
 
     return res.json(loginService);

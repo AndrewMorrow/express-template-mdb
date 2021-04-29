@@ -26,8 +26,12 @@ export default function validateRegisterInput(data) {
         errors.password = "Passwords do not match";
     }
 
-    return {
-        errors,
-        isValid: Object.keys(errors).length === 0,
-    };
+    const isValid = Object.keys(errors).length === 0;
+
+    if (!isValid) {
+        const err = new Error("Invalid Payload");
+        err.statusCode = 422;
+        err.errors = errors;
+        throw err;
+    }
 }

@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import Token from "../models/Token.model.js";
 import sendEmail from "../utils/email/sendEmail.js";
 import crypto from "crypto";
+import { createError } from "../middleware/customErrorHandler.js";
 const bcryptSalt = process.env.BCRYPT_SALT;
 const clientURL = process.env.CLIENT_URL;
 dotenv.config();
@@ -12,15 +13,19 @@ dotenv.config();
 // @Desc    Register new user
 // @Route   /api/auth/register
 // @Access  Public
-export const register = async (firstName, lastName, email, password) => {
+export const register = (firstName, lastName, email, password) => {
     return new Promise(async (resolve, reject) => {
         // check db for user
         const dbUser = await User.findOne({ email });
         // check if user exists
         if (dbUser) {
-            const err = new Error("Email already exists");
-            err.statusCode = 409;
-            return reject(err);
+            // const error = { email: "Email Already Exists" };
+            // const err = new Error("User Error");
+            // err.errors = error;
+            // err.statusCode = 409;
+            return reject(
+                createError("User Error", "email", "Email Already Exists", 409)
+            );
         }
 
         const newUser = new User({
@@ -46,10 +51,19 @@ export const register = async (firstName, lastName, email, password) => {
             { expiresIn: 31556926 },
             (err, token) => {
                 if (err) {
-                    return res.status(400).json({
-                        tokenerror:
+                    return reject(
+                        createError(
+                            "Token Error",
+                            "tokenerror",
                             "There was a problem updating your security token",
-                    });
+                            400
+                        )
+                    );
+
+                    // return res.status(400).json({
+                    //     tokenerror:
+                    //         "There was a problem updating your security token",
+                    // });
                 }
 
                 user.password = undefined;
@@ -77,13 +91,27 @@ export const login = async (email, password) => {
     // check db for user
     const user = await User.findOne({ email });
     if (!user) {
-        return res.status(401).json({ message: "Invalid email or password" });
+        const err = createError(
+            "Invalid Payload",
+            "login",
+            "Invalid email or password",
+            401
+        );
+        throw err;
+        // return res.status(401).json({ message: "Invalid email or password" });
     }
 
     // check password against db password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-        return res.status(401).json({ message: "Invalid email or password" });
+        const err = createError(
+            "Invalid Payload",
+            "user",
+            "Invalid email or password",
+            401
+        );
+        throw err;
+        // return res.status(401).json({ message: "Invalid email or password" });
     }
 
     const payload = {
@@ -92,7 +120,7 @@ export const login = async (email, password) => {
     };
 
     // sign token
-    jwt.sign(
+    const signedToken = jwt.sign(
         payload,
         process.env.JWT_SECRET,
         { expiresIn: 31556926 },
@@ -115,14 +143,19 @@ export const login = async (email, password) => {
             };
         }
     );
+    return signedToken;
 };
 
 export const requestPasswordReset = async (email) => {
-    // const email = req.body.email;
-
     // check db for user
     const user = await User.findOne({ email });
-    if (!user) throw new Error("User does not exist");
+    if (!user) {
+        const err = new Error("Invalid Payload");
+        const error = { user: "User does not exist" };
+        err.errors = error;
+        err.statusCode = 409;
+        throw err;
+    }
 
     // check if token already exists
     let token = await Token.findOne({ userId: user._id });

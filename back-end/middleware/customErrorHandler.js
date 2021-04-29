@@ -4,8 +4,16 @@ const notFound = (req, res, next) => {
     next(error);
 };
 
+// create a custom error
+const createError = (message, errType, errMsg, statusCode) => {
+    const err = new Error(message);
+    err.errors = { [errType]: errMsg };
+    err.statusCode = statusCode;
+    return err;
+};
+
 const errorHandler = (err, req, res, next) => {
-    // const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+    err.statusCode === 200 ? 500 : err.statusCode;
     res.status(err.statusCode);
     res.json({
         message: err.message,
@@ -22,4 +30,4 @@ const catchError = (fn) => {
     };
 };
 
-export { notFound, errorHandler, catchError };
+export { notFound, errorHandler, catchError, createError };
