@@ -12,10 +12,9 @@ import connectDB from "./config/db.js";
 import passport from "passport";
 import passConfig from "./config/passport.js";
 import { notFound, errorHandler } from "./middleware/customErrorHandler.js";
-import rateLimiterRedisMiddleware from "./middleware/rateLimiterRedis";
 
 // Route Imports
-import authRoutes from "./routes/auth.js";
+import authRoutes from "./routes/auth.routes.js";
 
 // Initialize dotenv
 if (process.env.NODE_ENV !== "production") {
@@ -34,10 +33,9 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); //Parse URL-encoded bodies
 app.use(logger("dev"));
-app.use(rateLimiterRedisMiddleware);
 
 // security package bundle
-app.use(helmet);
+app.use(helmet());
 
 // enable compression
 app.use(compression({ filter: shouldCompress }));

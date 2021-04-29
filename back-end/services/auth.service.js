@@ -1,5 +1,3 @@
-import validateRegisterInput from "../validation/register.js";
-import validateLoginInput from "../validation/login.js";
 import User from "../models/User.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -14,80 +12,66 @@ dotenv.config();
 // @Desc    Register new user
 // @Route   /api/auth/register
 // @Access  Public
-export const register = async (req, res) => {
-    const { errors, isValid } = validateRegisterInput(req.body);
+export const register = async (firstName, lastName, email, password) => {
+    return new Promise(async (resolve, reject) => {
+        // check db for user
+        const dbUser = await User.findOne({ email });
+        // check if user exists
+        if (dbUser) {
+            return reject({ email: "Email already exists" });
+        }
 
-    const firstName = req.body.firstName;
-    const lastName = req.body.lastName;
-    const email = req.body.email;
-    const password = req.body.password;
+        const newUser = new User({
+            firstName,
+            lastName,
+            email,
+            password,
+        });
 
-    // check db for user
-    const dbUser = await User.findOne({ email });
-    // check if user exists
-    if (dbUser) {
-        return res.status(400).json({ email: "Email already exists" });
-    }
-    // check for validation errors
-    if (!isValid) {
-        return res.status(400).json(errors);
-    }
+        // save user
+        const user = await newUser.save();
 
-    const newUser = new User({
-        firstName,
-        lastName,
-        email,
-        password,
-    });
+        const payload = {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+        };
 
-    // save user
-    const user = await newUser.save();
+        // sign token once registered
+        jwt.sign(
+            payload,
+            process.env.JWT_SECRET,
+            { expiresIn: 31556926 },
+            (err, token) => {
+                if (err) {
+                    return res.status(400).json({
+                        tokenerror:
+                            "There was a problem updating your security token",
+                    });
+                }
 
-    const payload = {
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-    };
+                user.password = undefined;
 
-    // sign token once registered
-    jwt.sign(
-        payload,
-        process.env.JWT_SECRET,
-        { expiresIn: 31556926 },
-        (err, token) => {
-            if (err) {
-                return res.status(400).json({
-                    tokenerror:
-                        "There was a problem updating your security token",
+                // send token and user info
+                // return res.json({
+                //     success: true,
+                //     token: `Bearer ${token}`,
+                //     user,
+                // });
+                return resolve({
+                    success: true,
+                    token: `Bearer ${token}`,
+                    user,
                 });
             }
-
-            user.password = undefined;
-
-            // send token and user info
-            res.json({
-                success: true,
-                token: `Bearer ${token}`,
-                user,
-            });
-        }
-    );
+        );
+    });
 };
 
 // @Desc    Login existing user
 // @Route   /api/auth/login
 // @Access  Public
-export const login = async (req, res) => {
-    const { errors, isValid } = validateLoginInput(req.body);
-
-    // check for validation errors
-    if (!isValid) {
-        return res.status(400).json(errors);
-    }
-
-    const email = req.body.email;
-    const password = req.body.password;
-
+export const login = async (email, password) => {
     // check db for user
     const user = await User.findOne({ email });
     if (!user) {
@@ -119,16 +103,20 @@ export const login = async (req, res) => {
             }
 
             // send signed token
-            return res.json({
+            // return res.json({
+            //     success: true,
+            //     token: `Bearer ${token}`,
+            // });
+            return {
                 success: true,
                 token: `Bearer ${token}`,
-            });
+            };
         }
     );
 };
 
-export const requestPasswordReset = async (req, res) => {
-    const email = req.body.email;
+export const requestPasswordReset = async (email) => {
+    // const email = req.body.email;
 
     // check db for user
     const user = await User.findOne({ email });
@@ -160,13 +148,13 @@ export const requestPasswordReset = async (req, res) => {
         "./template/requestResetPassword.handlebars"
     );
 
-    res.json(link);
+    return link;
 };
 
-export const resetPassword = async (req, res) => {
-    const userId = req.body.user;
-    const token = req.body.token;
-    const password = req.body.password;
+export const resetPassword = async (userId, token, password) => {
+    // const userId = req.body.user;
+    // const token = req.body.token;
+    // const password = req.body.password;
 
     // check for password token
     let passwordResetToken = await Token.findOne({ userId });
@@ -199,5 +187,6 @@ export const resetPassword = async (req, res) => {
         "./template/resetPassword.handlebars"
     );
     await passwordResetToken.deleteOne();
-    res.json(true);
+
+    return true;
 };
