@@ -2,6 +2,8 @@ import dotenv from "dotenv";
 import path from "path";
 import express from "express";
 import logger from "morgan";
+import helmet from "helmet";
+import compression from "compression";
 
 // import mongo connection
 import connectDB from "./config/db.js";
@@ -10,6 +12,7 @@ import connectDB from "./config/db.js";
 import passport from "passport";
 import passConfig from "./config/passport.js";
 import { notFound, errorHandler } from "./middleware/customErrorHandler.js";
+import rateLimiterRedisMiddleware from "./middleware/rateLimiterRedis";
 
 // Route Imports
 import authRoutes from "./routes/auth.js";
@@ -31,6 +34,23 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); //Parse URL-encoded bodies
 app.use(logger("dev"));
+app.use(rateLimiterRedisMiddleware);
+
+// security package bundle
+app.use(helmet);
+
+// enable compression
+app.use(compression({ filter: shouldCompress }));
+// custom filter compression
+function shouldCompress(req, res) {
+    if (req.headers["x-no-compression"]) {
+        // don't compress responses with this request header
+        return false;
+    }
+
+    // fallback to standard filter function
+    return compression.filter(req, res);
+}
 
 // Passport JWT setup
 app.use(passport.initialize());
