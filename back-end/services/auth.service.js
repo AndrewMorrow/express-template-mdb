@@ -14,6 +14,10 @@ dotenv.config();
 // @Route   /api/auth/register
 // @Access  Public
 export const register = async (firstName, lastName, email, password) => {
+    firstName.trim();
+    lastName.trim();
+    email.trim();
+    password.trim();
     // check db for user
     const dbUser = await User.findOne({ email });
     // check if user exists
@@ -62,6 +66,8 @@ export const register = async (firstName, lastName, email, password) => {
 // @Route   /api/auth/login
 // @Access  Public
 export const login = async (email, password) => {
+    email.trim();
+    password.trim();
     // check db for user
     const user = await User.findOne({ email });
     if (!user) {
@@ -148,10 +154,6 @@ export const requestPasswordReset = async (email) => {
 };
 
 export const resetPassword = async (userId, token, password) => {
-    // const userId = req.body.user;
-    // const token = req.body.token;
-    // const password = req.body.password;
-
     // check for password token
     let passwordResetToken = await Token.findOne({ userId });
     if (!passwordResetToken) {

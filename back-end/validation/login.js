@@ -1,6 +1,8 @@
 // Validate Login Info
 export default function validateLoginInput(data) {
     let errors = {};
+    data.email.trim();
+    data.password.trim();
 
     if (!data.email) {
         errors.email = "Email field is required";

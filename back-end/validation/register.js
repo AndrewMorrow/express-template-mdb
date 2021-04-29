@@ -1,6 +1,11 @@
 // Validate Register Info
 export default function validateRegisterInput(data) {
     let errors = {};
+    data.firstName.trim();
+    data.lastName.trim();
+    data.email.trim();
+    data.password.trim();
+    data.password2.trim();
 
     if (!data.firstName) {
         errors.firstName = "First name field is required";
