@@ -18,7 +18,9 @@ export const register = async (firstName, lastName, email, password) => {
         const dbUser = await User.findOne({ email });
         // check if user exists
         if (dbUser) {
-            return reject({ email: "Email already exists" });
+            const err = new Error("Email already exists");
+            err.statusCode = 409;
+            return reject(err);
         }
 
         const newUser = new User({

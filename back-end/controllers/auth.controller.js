@@ -11,18 +11,19 @@ const registerController = async (req, res, next) => {
     const { errors, isValid } = await validateRegisterInput(req.body);
     // check for validation errors
     if (!isValid) {
-        return res.status(400).json(errors);
+        const err = new Error("Invalid Payload");
+        err.statusCode = 422;
+        err.errors = errors;
+        throw err;
     }
     const registerService = await register(
         req.body.firstName,
         req.body.lastName,
         req.body.email,
         req.body.password
-    ).catch((err) => {
-        res.json(err);
-    });
+    );
     // console.log(registerService);
-    // return res.json(registerService);
+    return res.json(registerService);
 };
 
 const loginController = async (req, res, next) => {

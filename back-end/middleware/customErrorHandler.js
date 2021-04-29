@@ -5,10 +5,11 @@ const notFound = (req, res, next) => {
 };
 
 const errorHandler = (err, req, res, next) => {
-    const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
-    res.status(statusCode);
+    // const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+    res.status(err.statusCode);
     res.json({
         message: err.message,
+        errors: err.errors,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
     });
 };
