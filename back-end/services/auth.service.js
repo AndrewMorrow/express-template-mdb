@@ -13,75 +13,49 @@ dotenv.config();
 // @Desc    Register new user
 // @Route   /api/auth/register
 // @Access  Public
-export const register = (firstName, lastName, email, password) => {
-    return new Promise(async (resolve, reject) => {
-        // check db for user
-        const dbUser = await User.findOne({ email });
-        // check if user exists
-        if (dbUser) {
-            // const error = { email: "Email Already Exists" };
-            // const err = new Error("User Error");
-            // err.errors = error;
-            // err.statusCode = 409;
-            return reject(
-                createError("User Error", "email", "Email Already Exists", 409)
-            );
-        }
+export const register = async (firstName, lastName, email, password) => {
+    // check db for user
+    const dbUser = await User.findOne({ email });
+    // check if user exists
+    if (dbUser) {
+        // const error = { email: "Email Already Exists" };
+        // const err = new Error("User Error");
+        // err.errors = error;
+        // err.statusCode = 409;
 
-        const newUser = new User({
-            firstName,
-            lastName,
-            email,
-            password,
-        });
-
-        // save user
-        const user = await newUser.save();
-
-        const payload = {
-            id: user.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-        };
-
-        // sign token once registered
-        jwt.sign(
-            payload,
-            process.env.JWT_SECRET,
-            { expiresIn: 31556926 },
-            (err, token) => {
-                if (err) {
-                    return reject(
-                        createError(
-                            "Token Error",
-                            "tokenerror",
-                            "There was a problem updating your security token",
-                            400
-                        )
-                    );
-
-                    // return res.status(400).json({
-                    //     tokenerror:
-                    //         "There was a problem updating your security token",
-                    // });
-                }
-
-                user.password = undefined;
-
-                // send token and user info
-                // return res.json({
-                //     success: true,
-                //     token: `Bearer ${token}`,
-                //     user,
-                // });
-                return resolve({
-                    success: true,
-                    token: `Bearer ${token}`,
-                    user,
-                });
-            }
+        const error = createError(
+            "User Error",
+            "email",
+            "Email Already Exists",
+            409
         );
+        throw error;
+    }
+
+    const newUser = new User({
+        firstName,
+        lastName,
+        email,
+        password,
     });
+
+    // save user
+    const user = await newUser.save();
+
+    const payload = {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+    };
+
+    // sign token once registered
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+        expiresIn: 31556926,
+    });
+
+    user.password = undefined;
+
+    return { success: true, token: `Bearer ${token}`, user };
 };
 
 // @Desc    Login existing user
@@ -91,27 +65,27 @@ export const login = async (email, password) => {
     // check db for user
     const user = await User.findOne({ email });
     if (!user) {
-        const err = createError(
+        // throw custom error
+        const error = createError(
             "Invalid Payload",
             "login",
             "Invalid email or password",
             401
         );
-        throw err;
-        // return res.status(401).json({ message: "Invalid email or password" });
+        throw error;
     }
 
     // check password against db password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-        const err = createError(
+        // throw custom error
+        const error = createError(
             "Invalid Payload",
             "user",
             "Invalid email or password",
             401
         );
-        throw err;
-        // return res.status(401).json({ message: "Invalid email or password" });
+        throw error;
     }
 
     const payload = {
@@ -119,42 +93,29 @@ export const login = async (email, password) => {
         name: user.firstName,
     };
 
-    // sign token
-    const signedToken = jwt.sign(
-        payload,
-        process.env.JWT_SECRET,
-        { expiresIn: 31556926 },
-        (err, token) => {
-            if (err) {
-                return res.status(400).json({
-                    tokenerror:
-                        "There was a problem updating your security token",
-                });
-            }
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+        expiresIn: 31556926,
+    });
 
-            // send signed token
-            // return res.json({
-            //     success: true,
-            //     token: `Bearer ${token}`,
-            // });
-            return {
-                success: true,
-                token: `Bearer ${token}`,
-            };
-        }
-    );
-    return signedToken;
+    // return signed token
+    return {
+        token: `Bearer ${token}`,
+        success: true,
+    };
 };
 
 export const requestPasswordReset = async (email) => {
     // check db for user
     const user = await User.findOne({ email });
     if (!user) {
-        const err = new Error("Invalid Payload");
-        const error = { user: "User does not exist" };
-        err.errors = error;
-        err.statusCode = 409;
-        throw err;
+        // throw custom error
+        const error = createError(
+            "Invalid Payload",
+            "user",
+            "User does not exist",
+            409
+        );
+        throw error;
     }
 
     // check if token already exists
@@ -194,13 +155,25 @@ export const resetPassword = async (userId, token, password) => {
     // check for password token
     let passwordResetToken = await Token.findOne({ userId });
     if (!passwordResetToken) {
-        throw new Error("Invalid or expired password reset token");
+        const error = createError(
+            "Invalid Token",
+            "token",
+            "Invalid or expired password reset token",
+            401
+        );
+        throw error;
     }
 
     // compare token to stored token
     const isValid = await bcrypt.compare(token, passwordResetToken.token);
     if (!isValid) {
-        throw new Error("Invalid or expired password reset token");
+        const error = createError(
+            "Invalid Token",
+            "token",
+            "Invalid or expired password reset token",
+            401
+        );
+        throw error;
     }
 
     // hash new password and update user

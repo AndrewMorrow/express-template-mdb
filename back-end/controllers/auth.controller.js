@@ -22,9 +22,6 @@ const registerController = async (req, res, next) => {
 
 const loginController = async (req, res, next) => {
     await validateLoginInput(req.body);
-    // if (!isValid) {
-    //     return res.status(400).json(errors);
-    // }
     const loginService = await login(req.body.email, req.body.password);
 
     return res.json(loginService);
