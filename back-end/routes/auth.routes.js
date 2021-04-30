@@ -6,6 +6,10 @@ import {
     updatePasswordController,
 } from "../controllers/auth.controller.js";
 import { catchError } from "../middleware/customErrorHandler.js";
+import passport from "passport";
+import jwt from "jsonwebtoken";
+// Middleware to use when routes require authenticated user.
+const requiresAuth = passport.authenticate("jwt", { session: false });
 
 const authRoutes = (app) => {
     // @Desc    Register new user
@@ -31,6 +35,7 @@ const authRoutes = (app) => {
     // @Desc    User password Update
     // @Access  Private
     app.route("/api/auth/service/passwordUpdate").put(
+        requiresAuth,
         catchError(updatePasswordController)
     );
 };

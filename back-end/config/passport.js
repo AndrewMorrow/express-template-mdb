@@ -23,7 +23,7 @@ export default (passport) => {
                     return done(user, false);
                 })
                 .catch((err) => {
-                    return err;
+                    console.log(err);
                 });
         })
     );
