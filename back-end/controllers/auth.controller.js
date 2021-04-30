@@ -18,7 +18,7 @@ const registerController = async (req, res, next) => {
         req.body.email,
         req.body.password
     );
-    // console.log(registerService);
+
     return res.json(registerService);
 };
 

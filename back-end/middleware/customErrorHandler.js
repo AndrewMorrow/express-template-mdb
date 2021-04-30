@@ -13,8 +13,12 @@ const createError = (message, errType, errMsg, statusCode) => {
 };
 
 const errorHandler = (err, req, res, next) => {
-    err.statusCode === 200 ? 500 : err.statusCode;
-    res.status(err.statusCode);
+    const statusCode =
+        err.statusCode === undefined || err.statusCode === 200
+            ? 500
+            : err.statusCode;
+
+    res.status(statusCode);
     res.json({
         message: err.message,
         errors: err.errors,

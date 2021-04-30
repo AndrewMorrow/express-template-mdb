@@ -14,19 +14,16 @@ dotenv.config();
 // @Route   /api/auth/register
 // @Access  Public
 export const register = async (firstName, lastName, email, password) => {
-    firstName.trim();
-    lastName.trim();
-    email.trim();
-    password.trim();
+    const firstNameTrim = firstName.trim();
+    const lastNameTrim = lastName.trim();
+    const emailTrim = email.trim();
+    const passwordTrim = password.trim();
+
     // check db for user
-    const dbUser = await User.findOne({ email });
+    const dbUser = await User.findOne({ email: emailTrim });
+
     // check if user exists
     if (dbUser) {
-        // const error = { email: "Email Already Exists" };
-        // const err = new Error("User Error");
-        // err.errors = error;
-        // err.statusCode = 409;
-
         const error = createError(
             "User Error",
             "email",
@@ -37,39 +34,30 @@ export const register = async (firstName, lastName, email, password) => {
     }
 
     const newUser = new User({
-        firstName,
-        lastName,
-        email,
-        password,
+        firstName: firstNameTrim,
+        lastName: lastNameTrim,
+        email: emailTrim,
+        password: passwordTrim,
     });
 
     // save user
     const user = await newUser.save();
 
-    const payload = {
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-    };
-
-    // sign token once registered
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {
-        expiresIn: 31556926,
-    });
-
     user.password = undefined;
 
-    return { success: true, token: `Bearer ${token}`, user };
+    const token = await login(user.email, passwordTrim);
+    return { token };
 };
 
 // @Desc    Login existing user
 // @Route   /api/auth/login
 // @Access  Public
 export const login = async (email, password) => {
-    email.trim();
+    const emailTrim = email.trim();
     password.trim();
+
     // check db for user
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: emailTrim });
     if (!user) {
         // throw custom error
         const error = createError(
@@ -96,7 +84,7 @@ export const login = async (email, password) => {
 
     const payload = {
         id: user.id,
-        name: user.firstName,
+        firstName: user.firstName,
     };
 
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
