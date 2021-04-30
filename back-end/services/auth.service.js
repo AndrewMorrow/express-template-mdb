@@ -27,7 +27,7 @@ export const register = async (firstName, lastName, email, password) => {
         const error = createError(
             "User Error",
             "email",
-            "Email Already Exists",
+            "Email already exists",
             409
         );
         throw error;
@@ -54,7 +54,7 @@ export const register = async (firstName, lastName, email, password) => {
 // @Access  Public
 export const login = async (email, password) => {
     const emailTrim = email.trim();
-    password.trim();
+    const passTrim = password.trim();
 
     // check db for user
     const user = await User.findOne({ email: emailTrim });
@@ -70,7 +70,7 @@ export const login = async (email, password) => {
     }
 
     // check password against db password
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(passTrim, user.password);
     if (!isMatch) {
         // throw custom error
         const error = createError(
