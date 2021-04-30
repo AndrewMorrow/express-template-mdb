@@ -2,19 +2,19 @@
 export default function validateUpdateInput(data) {
     let errors = {};
 
-    data.currPass.trim();
-    data.updatedPass.trim();
-    data.updatedPass2.trim();
+    const currPassTrim = data.currPass.trim();
+    const updPassTrim = data.updatedPass.trim();
+    const updPass2Trim = data.updatedPass2.trim();
 
-    if (!data.currPass) {
+    if (!currPassTrim) {
         errors.password = "Please enter your current password";
-    } else if (!data.updatedPass) {
+    } else if (!updPassTrim) {
         errors.password = "Password field is required";
-    } else if (!data.updatedPass2) {
+    } else if (!updPass2Trim) {
         errors.password = "Please re-enter your password";
-    } else if (data.updatedPass.length < 8 || data.updatedPass.length > 20) {
+    } else if (updPassTrim.length < 8 || updPassTrim.length > 20) {
         errors.password = "Password must be between 8 and 20 characters";
-    } else if (data.updatedPass !== data.updatedPass2) {
+    } else if (updPassTrim !== updPass2Trim) {
         errors.password = "Passwords do not match";
     }
 

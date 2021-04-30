@@ -12,6 +12,7 @@ const createError = (message, errType, errMsg, statusCode) => {
     return err;
 };
 
+// custom error handler
 const errorHandler = (err, req, res, next) => {
     const statusCode =
         err.statusCode === undefined || err.statusCode === 200
@@ -26,6 +27,7 @@ const errorHandler = (err, req, res, next) => {
     });
 };
 
+// catch async errors
 const catchError = (fn) => {
     return function (req, res, next) {
         return fn(req, res, next).catch((e) => {
