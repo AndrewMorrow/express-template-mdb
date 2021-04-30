@@ -25,7 +25,7 @@ Once cloned down you can cd into the back-end directory and run "npm install" to
 
 ## Usage Information
 
-<img src = "https://img.shields.io/badge/license-None-blue">
+<img src = "https://img.shields.io/badge/license-MIT-blue">
 
 There is an option on this repository that says "Use this template" by clicking this you can create a new repository that will have all of the files and folders of this repository to get you started.
 
@@ -33,7 +33,7 @@ There is an option on this repository that says "Use this template" by clicking 
 
 ## License
 
-This project is not utilizing a license
+This project is utilizing the MIT license
 
 ---
 
