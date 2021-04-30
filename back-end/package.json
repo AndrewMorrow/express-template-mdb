@@ -25,6 +25,7 @@
         "compression": "^1.7.4",
         "crypto": "^1.0.1",
         "express": "^4.17.1",
+        "express-rate-limit": "^5.2.6",
         "handlebars": "^4.7.7",
         "helmet": "^4.5.0",
         "if-env": "^1.0.4",
