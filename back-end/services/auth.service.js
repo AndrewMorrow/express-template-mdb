@@ -178,7 +178,6 @@ export const resetPassword = async (userId, token, password) => {
         throw error;
     }
 
-    // hash new password and update user
     const hash = await bcrypt.hash(password, Number(bcryptSalt));
     await User.updateOne(
         { _id: userId },
@@ -197,6 +196,41 @@ export const resetPassword = async (userId, token, password) => {
         "./template/resetPassword.handlebars"
     );
     await passwordResetToken.deleteOne();
+
+    return true;
+};
+
+export const updatePassword = async (userId, currPass, updatedPass) => {
+    const currPassword = currPass.trim();
+    const updatedPassword = updatedPass.trim();
+
+    const user = await User.findOne({ _id: userId });
+    if (!user) {
+        // throw custom error
+        const error = createError(
+            "Invalid Payload",
+            "login",
+            "User not found",
+            401
+        );
+        throw error;
+    }
+    // check password against db password
+    const isMatch = await bcrypt.compare(currPassword, user.password);
+    if (!isMatch) {
+        // throw custom error
+        const error = createError(
+            "Invalid Payload",
+            "user",
+            "Invalid current password",
+            401
+        );
+        throw error;
+    }
+
+    const hash = await bcrypt.hash(updatedPassword, Number(bcryptSalt));
+    // update user with new password
+    await User.updateOne({ _id: userId }, { password: hash }, { new: true });
 
     return true;
 };

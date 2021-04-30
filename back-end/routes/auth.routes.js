@@ -3,6 +3,7 @@ import {
     loginController,
     resetPasswordRequestController,
     resetPasswordController,
+    updatePasswordController,
 } from "../controllers/auth.controller.js";
 import { catchError } from "../middleware/customErrorHandler.js";
 
@@ -25,6 +26,12 @@ const authRoutes = (app) => {
     // @Access  Public
     app.route("/api/auth/service/requestReset").post(
         catchError(resetPasswordRequestController)
+    );
+
+    // @Desc    User password Update
+    // @Access  Private
+    app.route("/api/auth/service/passwordUpdate").put(
+        catchError(updatePasswordController)
     );
 };
 
