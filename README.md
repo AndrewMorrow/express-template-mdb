@@ -2,7 +2,7 @@
 
 ## Description
 
-This is an express template with user authentication baked in ready to connect to your favorite front-end technology. It utilizes Passport, and JSON web token for authentication purposes. There is a forgot password functionality built in using nodemailer to send the password reset email and handlebars as a templating engine for the email.
+This is an express template with user authentication baked in ready to connect to your favorite front-end technology. It utilizes Passport, and jsonwebtoken for authentication purposes with basic auth routes for logging in and registering are already defined. Baked in is a forgot password feature that utilizes handlebars to send a template of your styling choice to the user with nodemailer.
 
 ---
 
