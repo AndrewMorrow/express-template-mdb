@@ -22,19 +22,17 @@ const authRoutes = (app) => {
 
     // @Desc    Reset existing user password
     // @Access  Public
-    app.route("/api/auth/service/reset").post(
-        catchError(resetPasswordController)
-    );
+    app.route("/api/auth/reset").post(catchError(resetPasswordController));
 
     // @Desc    Request user password reset
     // @Access  Public
-    app.route("/api/auth/service/requestReset").post(
+    app.route("/api/auth/requestReset").post(
         catchError(resetPasswordRequestController)
     );
 
     // @Desc    User password Update
     // @Access  Private
-    app.route("/api/auth/service/passwordUpdate").put(
+    app.route("/api/auth/passwordUpdate").put(
         requiresAuth,
         catchError(updatePasswordController)
     );
