@@ -29,6 +29,13 @@ Once cloned down you can cd into the back-end directory and run "npm install" to
 
 There is an option on this repository that says "Use this template" by clicking this you can create a new repository that will have all of the files and folders of this repository to get you started.
 
+#### NPM Commands
+
+-   npm start - This will start the server and the client simultaneously.
+-   npm run lint - This will run an eslint fix
+-   npm run data:import - This will run the seeder to seed the database.
+-   npm run data:destroy - This will run the seeder to destroy all data in the database.
+
 ---
 
 ## License
