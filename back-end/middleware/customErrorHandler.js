@@ -5,9 +5,9 @@ const notFound = (req, res, next) => {
 };
 
 // create a custom error
-const createError = (message, errType, errMsg, statusCode) => {
+const createError = (message, errMsg, statusCode) => {
   const err = new Error(message);
-  err.errors = { [errType]: errMsg };
+  err.errors = { error: errMsg };
   err.statusCode = statusCode;
   return err;
 };
@@ -18,7 +18,7 @@ const errorHandler = (err, req, res, next) => {
     err.statusCode === undefined || err.statusCode === 200
       ? 500
       : err.statusCode;
-  console.log("custom error");
+
   res.status(statusCode).json({
     message: err.message,
     errors: err.errors,
