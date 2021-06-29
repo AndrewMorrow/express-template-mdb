@@ -58,6 +58,7 @@ const updatePasswordController = async (req, res, next) => {
     return res.json({ message: "Your password was updated successfully" });
 };
 
+
 export {
     registerController,
     loginController,
