@@ -4,6 +4,7 @@ import {
   resetPasswordRequestController,
   resetPasswordController,
   updatePasswordController,
+  updateUserController,
 } from "../controllers/auth.controller.js";
 import { catchError } from "../middleware/customErrorHandler.js";
 import passport from "passport";
@@ -35,6 +36,12 @@ const authRoutes = (app) => {
   app
     .route("/api/auth/passwordUpdate")
     .put(requiresAuth, catchError(updatePasswordController));
+
+  // @Desc    User Information Update
+  // @Access  Private
+  app
+    .route("/api/auth/updateUser")
+    .put(requiresAuth, catchError(updateUserController));
 
 };
 

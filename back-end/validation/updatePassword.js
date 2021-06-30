@@ -1,5 +1,5 @@
 // Validate Register Info
-export default function validateUpdateInput(data) {
+export default function validatePassUpdateInput(data) {
     let errors = {};
 
     const currPassTrim = data.currPass.trim();

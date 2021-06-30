@@ -206,3 +206,47 @@ export const updatePassword = async (userId, currPass, updatedPass) => {
 
   return true;
 };
+
+export const updateUser = async (userId, userData) => {
+  const user = await User.findOne({ _id: userId });
+  if (!user) {
+    // throw custom error
+    const error = createError("Invalid Payload", "User not found!", 401);
+    throw error;
+  }
+
+  if (userData.firstName) {
+    const firstNameTrim = userData.firstName.trim();
+    user.firstName = firstNameTrim;
+  }
+  if (userData.lastName) {
+    const lastNameTrim = userData.lastName.trim();
+    user.lastName = lastNameTrim;
+  }
+  if (userData.email) {
+    const emailTrim = userData.email.trim();
+    user.email = emailTrim;
+  }
+  if (userData.password) {
+    const passwordTrim = userData.password.trim();
+    user.password = passwordTrim;
+  }
+
+  // update user with new information
+  await user.save();
+
+  const payload = {
+    id: user.id,
+    firstName: user.firstNameTrim,
+  };
+
+  const token = jwt.sign(payload, process.env.JWT_SECRET, {
+    expiresIn: 31556926,
+  });
+
+  return {
+    token: `Bearer ${token}`,
+    success: true,
+    message: "Your information was updated successfully",
+  };
+};
