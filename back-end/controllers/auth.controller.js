@@ -31,6 +31,12 @@ const loginController = async (req, res, next) => {
   return res.json(loginService);
 };
 
+const getUserController = async (req, res, next) => {
+  const { _id, firstName, lastName, email, date } = req.user;
+
+  return res.json({ _id, firstName, lastName, email, date });
+};
+
 const resetPasswordRequestController = async (req, res, next) => {
   const requestPasswordResetService = await requestPasswordReset(
     req.body.email
@@ -75,4 +81,5 @@ export {
   resetPasswordController,
   updatePasswordController,
   updateUserController,
+  getUserController,
 };
