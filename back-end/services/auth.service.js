@@ -45,7 +45,7 @@ export const register = async (firstName, lastName, email, password) => {
   user.password = undefined;
 
   const token = await login(user.email, passwordTrim);
-  return { token };
+  return token;
 };
 
 // @Desc    Login existing user
@@ -100,7 +100,11 @@ export const requestPasswordReset = async (email) => {
   const user = await User.findOne({ email });
   if (!user) {
     // throw custom error
-    const error = createError("Invalid Payload", "User does not exist!", 409);
+    const error = createError(
+      "Invalid Payload",
+      "An account with that email does not exist!",
+      409
+    );
     throw error;
   }
 

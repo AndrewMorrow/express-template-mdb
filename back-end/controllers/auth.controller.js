@@ -38,11 +38,11 @@ const getUserController = async (req, res, next) => {
 };
 
 const resetPasswordRequestController = async (req, res, next) => {
-  const requestPasswordResetService = await requestPasswordReset(
-    req.body.email
-  );
+  await requestPasswordReset(req.body.email);
 
-  return res.json(requestPasswordResetService);
+  return res.json({
+    message: "Please check your email to reset your password",
+  });
 };
 
 const resetPasswordController = async (req, res, next) => {
