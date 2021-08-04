@@ -30,7 +30,9 @@ const authRoutes = (app) => {
 
   // @Desc    Reset existing user password
   // @Access  Public
-  app.route("/api/auth/reset").post(catchError(resetPasswordController));
+  app
+    .route("/api/auth/resetPassword")
+    .post(catchError(resetPasswordController));
 
   // @Desc    Request user password reset
   // @Access  Public

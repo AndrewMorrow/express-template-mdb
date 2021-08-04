@@ -138,12 +138,15 @@ export const requestPasswordReset = async (email) => {
 };
 
 export const resetPassword = async (userId, token, password) => {
+  console.log({ userID: userId });
+  console.log({ token: token });
+  console.log({ password: password });
   // check for password token
   let passwordResetToken = await Token.findOne({ userId });
   if (!passwordResetToken) {
     const error = createError(
       "Invalid Token",
-      "Invalid or expired password reset token!",
+      "Invalid or expired password reset token! Please request another one.",
       401
     );
     throw error;

@@ -9,6 +9,7 @@ import {
 import validateRegisterInput from "../validation/register.js";
 import validateLoginInput from "../validation/login.js";
 import validatePassUpdateInput from "../validation/updatePassword.js";
+import validatePassResetInput from "../validation/resetPassword.js";
 import validateUserUpdateInput from "../validation/updateUser.js";
 
 const registerController = async (req, res, next) => {
@@ -46,13 +47,17 @@ const resetPasswordRequestController = async (req, res, next) => {
 };
 
 const resetPasswordController = async (req, res, next) => {
+  console.log("Working");
+  await validatePassResetInput(req.body);
   const resetPasswordService = await resetPassword(
     req.body.userId,
     req.body.token,
     req.body.password
   );
 
-  return res.json(resetPasswordService);
+  return res.json({
+    message: "Your password has been successfully updated!",
+  });
 };
 
 const updatePasswordController = async (req, res, next) => {
