@@ -1,10 +1,10 @@
 // Validate Register Info
 export default function validateRegisterInput(data) {
-  console.log("running");
   let errors = {};
   const passTrim = data.password.trim();
   const pass2Trim = data.password2.trim();
 
+  // checks password fields and length
   if (!passTrim) {
     errors.password = "Password field is required";
   } else if (!pass2Trim) {
@@ -15,8 +15,10 @@ export default function validateRegisterInput(data) {
     errors.password2 = "Passwords do not match";
   }
 
+  // checks length of errors object
   const isValid = Object.keys(errors).length === 0;
 
+  // throw custom errors if any
   if (!isValid) {
     const err = new Error("Invalid Payload");
     err.statusCode = 422;

@@ -6,6 +6,7 @@ export default function validatePassUpdateInput(data) {
     const updPassTrim = data.updatedPass.trim();
     const updPass2Trim = data.updatedPass2.trim();
 
+    // checks password fields and length
     if (!currPassTrim) {
         errors.password = "Please enter your current password";
     } else if (!updPassTrim) {
@@ -18,8 +19,10 @@ export default function validatePassUpdateInput(data) {
         errors.password = "Passwords do not match";
     }
 
+      // checks length of errors object
     const isValid = Object.keys(errors).length === 0;
 
+      // throw custom errors if any
     if (!isValid) {
         const err = new Error("Invalid Payload");
         err.statusCode = 422;

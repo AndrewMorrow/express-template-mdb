@@ -84,6 +84,7 @@ export const login = async (email, password) => {
     firstName: user.firstName,
   };
 
+  // sign token after verified
   const token = jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: 31556926,
   });
@@ -95,6 +96,9 @@ export const login = async (email, password) => {
   };
 };
 
+// @Desc    Request User Password Reset
+// @Route   /api/auth/requestReset
+// @Access  Public
 export const requestPasswordReset = async (email) => {
   // check db for user
   const user = await User.findOne({ email });
@@ -137,10 +141,13 @@ export const requestPasswordReset = async (email) => {
   return link;
 };
 
+// @Desc    Request User Password Reset
+// @Route   /api/auth/resetPassword
+// @Access  Private
 export const resetPassword = async (userId, token, password) => {
-  console.log({ userID: userId });
-  console.log({ token: token });
-  console.log({ password: password });
+  // console.log({ userID: userId });
+  // console.log({ token: token });
+  // console.log({ password: password });
   // check for password token
   let passwordResetToken = await Token.findOne({ userId });
   if (!passwordResetToken) {
@@ -185,6 +192,9 @@ export const resetPassword = async (userId, token, password) => {
   return true;
 };
 
+// @Desc    Request User Password Reset
+// @Route   /api/auth/passwordUpdate
+// @Access  Private
 export const updatePassword = async (userId, currPass, updatedPass) => {
   const currPassword = currPass.trim();
   const updatedPassword = updatedPass.trim();
@@ -214,6 +224,10 @@ export const updatePassword = async (userId, currPass, updatedPass) => {
   return true;
 };
 
+
+// @Desc    Request User Password Reset
+// @Route   /api/auth/updateUser
+// @Access  Private
 export const updateUser = async (userId, userData) => {
   const user = await User.findOne({ _id: userId });
   if (!user) {

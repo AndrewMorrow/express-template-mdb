@@ -13,6 +13,7 @@ import jwt from "jsonwebtoken";
 // Middleware to use when routes require authenticated user.
 const requiresAuth = passport.authenticate("jwt", { session: false });
 
+// authorization routes
 const authRoutes = (app) => {
   // @Desc    Register new user
   // @Access  Public
