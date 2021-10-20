@@ -1,7 +1,7 @@
 import {
   registerController,
   loginController,
-  resetPasswordRequestController,
+  requestPasswordResetController,
   resetPasswordController,
   updatePasswordController,
   updateUserController,
@@ -38,13 +38,13 @@ const authRoutes = (app) => {
   // @Desc    Request user password reset
   // @Access  Public
   app
-    .route("/api/auth/requestReset")
-    .post(catchError(resetPasswordRequestController));
+    .route("/api/auth/requestPasswordReset")
+    .post(catchError(requestPasswordResetController));
 
   // @Desc    User password Update
   // @Access  Private
   app
-    .route("/api/auth/passwordUpdate")
+    .route("/api/auth/updatePassword")
     .put(requiresAuth, catchError(updatePasswordController));
 
   // @Desc    User Information Update

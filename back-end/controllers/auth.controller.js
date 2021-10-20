@@ -6,16 +6,17 @@ import {
   updatePassword,
   updateUser,
 } from "../services/auth.service.js";
-import validateRegisterInput from "../validation/register.js";
-import validateLoginInput from "../validation/login.js";
-import validatePassUpdateInput from "../validation/updatePassword.js";
-import validatePassResetInput from "../validation/resetPassword.js";
-import validateUserUpdateInput from "../validation/updateUser.js";
+// import validateRegisterInput from "../validation/register.js";
+// import validateLoginInput from "../validation/login.js";
+// import validatePassUpdateInput from "../validation/updatePassword.js";
+// import validatePassResetInput from "../validation/resetPassword.js";
+// import validateUserUpdateInput from "../validation/updateUser.js";
+import validate from "../validation/validation.js";
 
 // register new user controller
 const registerController = async (req, res, next) => {
   // validate user input
-  await validateRegisterInput(req.body);
+  await validate.register(req.body);
 
   const registerService = await register(
     req.body.firstName,
@@ -30,7 +31,7 @@ const registerController = async (req, res, next) => {
 // login existing user controller
 const loginController = async (req, res, next) => {
   // validate user input
-  await validateLoginInput(req.body);
+  await validate.login(req.body);
   const loginService = await login(req.body.email, req.body.password);
 
   return res.json(loginService);
@@ -44,7 +45,7 @@ const getUserController = async (req, res, next) => {
 };
 
 // request password reset controller
-const resetPasswordRequestController = async (req, res, next) => {
+const requestPasswordResetController = async (req, res, next) => {
   await requestPasswordReset(req.body.email);
 
   return res.json({
@@ -54,7 +55,8 @@ const resetPasswordRequestController = async (req, res, next) => {
 
 // reset password controller
 const resetPasswordController = async (req, res, next) => {
-  await validatePassResetInput(req.body);
+  // validate user input
+  await validate.resetPassword(req.body);
   const resetPasswordService = await resetPassword(
     req.body.userId,
     req.body.token,
@@ -68,7 +70,8 @@ const resetPasswordController = async (req, res, next) => {
 
 // update password controller
 const updatePasswordController = async (req, res, next) => {
-  await validatePassUpdateInput(req.body);
+  // Validate user input
+  await validate.updatePassword(req.body);
   const updatePasswordService = await updatePassword(
     req.body.userId,
     req.body.currPass,
@@ -80,7 +83,8 @@ const updatePasswordController = async (req, res, next) => {
 
 // update user info controller
 const updateUserController = async (req, res, next) => {
-  await validateUserUpdateInput(req.body);
+  // validate user input
+  await validate.updateUser(req.body);
   console.log(req.user);
   const updateUserService = await updateUser(req.user._id, req.body);
 
@@ -91,7 +95,7 @@ const updateUserController = async (req, res, next) => {
 export {
   registerController,
   loginController,
-  resetPasswordRequestController,
+  requestPasswordResetController,
   resetPasswordController,
   updatePasswordController,
   updateUserController,

@@ -1,11 +1,11 @@
 // Validate Register Info
 export default function validateRegisterInput(data) {
   let errors = {};
-  const firstTrim = data.firstName.trim();
-  const lastTrim = data.lastName.trim();
-  const emailTrim = data.email.trim();
-  const passTrim = data.password.trim();
-  const pass2Trim = data.password2.trim();
+  const firstTrim = data?.firstName?.trim();
+  const lastTrim = data?.lastName?.trim();
+  const emailTrim = data?.email?.trim();
+  const passTrim = data?.password?.trim();
+  const pass2Trim = data?.password2?.trim();
 
   // check first name
   if (!firstTrim) {

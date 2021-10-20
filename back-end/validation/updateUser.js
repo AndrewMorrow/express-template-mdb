@@ -1,4 +1,4 @@
-// Validate Register Info
+// Validate Update User Info
 export default function validateUserUpdateInput(data) {
   let errors = {};
 

@@ -1,5 +1,5 @@
-// Validate Register Info
-export default function validateRegisterInput(data) {
+// Validate ResetPassword Info
+export default function validateResetPassInput(data) {
   let errors = {};
   const passTrim = data.password.trim();
   const pass2Trim = data.password2.trim();

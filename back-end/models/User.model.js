@@ -34,6 +34,10 @@ const UserSchema = new Schema({
   },
 });
 
+UserSchema.virtual('fullName').get(function() {
+  return this.firstName + ' ' + this.lastName;
+});
+
 // hash password with bcrypt before saving to db
 UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
