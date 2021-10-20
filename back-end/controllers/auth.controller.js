@@ -1,11 +1,4 @@
-import {
-  login,
-  register,
-  requestPasswordReset,
-  resetPassword,
-  updatePassword,
-  updateUser,
-} from "../services/auth.service.js";
+import auth from "../services/auth.service.js";
 // import validationRegisterInput from "../validation/register.js";
 // import validateLoginInput from "../validation/login.js";
 // import validatePassUpdateInput from "../validation/updatePassword.js";
@@ -19,7 +12,7 @@ const controllers = {
     // validate user input
     await validation.register(req.body);
 
-    const registerService = await register(
+    const registerService = await auth.register(
       req.body.firstName,
       req.body.lastName,
       req.body.email,
@@ -32,7 +25,7 @@ const controllers = {
   loginController: async (req, res, next) => {
     // validation user input
     await validation.login(req.body);
-    const loginService = await login(req.body.email, req.body.password);
+    const loginService = await auth.login(req.body.email, req.body.password);
 
     return res.json(loginService);
   },
@@ -45,7 +38,7 @@ const controllers = {
   },
   // request password reset controller
   requestPasswordResetController: async (req, res, next) => {
-    await requestPasswordReset(req.body.email);
+    await auth.requestPasswordReset(req.body.email);
 
     return res.json({
       message: "Please check your email to reset your password",
@@ -55,7 +48,7 @@ const controllers = {
   resetPasswordController: async (req, res, next) => {
     // validation user input
     await validation.resetPassword(req.body);
-    const resetPasswordService = await resetPassword(
+    const resetPasswordService = await auth.resetPassword(
       req.body.userId,
       req.body.token,
       req.body.password
@@ -69,7 +62,7 @@ const controllers = {
   updatePasswordController: async (req, res, next) => {
     // validation user input
     await validation.updatePassword(req.body);
-    const updatePasswordService = await updatePassword(
+    const updatePasswordService = await auth.updatePassword(
       req.body.userId,
       req.body.currPass,
       req.body.updatedPass
@@ -82,7 +75,7 @@ const controllers = {
     // validation user input
     await validation.updateUser(req.body);
     console.log(req.user);
-    const updateUserService = await updateUser(req.user._id, req.body);
+    const updateUserService = await auth.updateUser(req.user._id, req.body);
 
     return res.json(updateUserService);
   },
