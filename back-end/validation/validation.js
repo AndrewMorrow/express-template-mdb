@@ -1,4 +1,4 @@
-const validate = {
+const validation = {
   // Validate Register Info
   register: (data) => {
     let errors = {};
@@ -180,4 +180,4 @@ const validate = {
   },
 };
 
-export default validate;
+export default validation;

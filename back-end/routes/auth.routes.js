@@ -1,12 +1,4 @@
-import {
-  registerController,
-  loginController,
-  requestPasswordResetController,
-  resetPasswordController,
-  updatePasswordController,
-  updateUserController,
-  getUserController,
-} from "../controllers/auth.controller.js";
+import controllers from "../controllers/auth.controller.js";
 import { catchError } from "../middleware/customErrorHandler.js";
 import passport from "passport";
 import jwt from "jsonwebtoken";
@@ -17,41 +9,43 @@ const requiresAuth = passport.authenticate("jwt", { session: false });
 const authRoutes = (app) => {
   // @Desc    Register new user
   // @Access  Public
-  app.route("/api/auth/register").post(catchError(registerController));
+  app
+    .route("/api/auth/register")
+    .post(catchError(controllers.registerController));
 
   // @Desc    Login existing user
   // @Access  Public
-  app.route("/api/auth/login").post(catchError(loginController));
+  app.route("/api/auth/login").post(catchError(controllers.loginController));
 
   // @Desc    Get current user
   // @Access  Private
   app
     .route("/api/auth/getUser")
-    .get(requiresAuth, catchError(getUserController));
+    .get(requiresAuth, catchError(controllers.getUserController));
 
   // @Desc    Reset existing user password
   // @Access  Public
   app
     .route("/api/auth/resetPassword")
-    .post(catchError(resetPasswordController));
+    .post(catchError(controllers.resetPasswordController));
 
   // @Desc    Request user password reset
   // @Access  Public
   app
     .route("/api/auth/requestPasswordReset")
-    .post(catchError(requestPasswordResetController));
+    .post(catchError(controllers.requestPasswordResetController));
 
   // @Desc    User password Update
   // @Access  Private
   app
     .route("/api/auth/updatePassword")
-    .put(requiresAuth, catchError(updatePasswordController));
+    .put(requiresAuth, catchError(controllers.updatePasswordController));
 
   // @Desc    User Information Update
   // @Access  Private
   app
     .route("/api/auth/updateUser")
-    .put(requiresAuth, catchError(updateUserController));
+    .put(requiresAuth, catchError(controllers.updateUserController));
 };
 
 export default authRoutes;
