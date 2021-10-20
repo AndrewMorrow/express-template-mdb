@@ -20,25 +20,25 @@
     "author": "Andrew Morrow",
     "license": "ISC",
     "dependencies": {
-        "axios": "^0.21.1",
+        "axios": "^0.21.4",
         "bcryptjs": "^2.4.3",
         "compression": "^1.7.4",
         "crypto": "^1.0.1",
         "express": "^4.17.1",
-        "express-rate-limit": "^5.2.6",
+        "express-rate-limit": "^5.5.0",
         "handlebars": "^4.7.7",
-        "helmet": "^4.5.0",
+        "helmet": "^4.6.0",
         "if-env": "^1.0.4",
         "jsonwebtoken": "^8.5.1",
-        "mongoose": "^5.12.5",
-        "nodemailer": "^6.5.0",
+        "mongoose": "^5.13.12",
+        "nodemailer": "^6.7.0",
         "passport": "^0.4.1",
         "passport-jwt": "^4.0.0"
     },
     "devDependencies": {
-        "concurrently": "^6.0.2",
-        "dotenv": "^8.2.0",
+        "concurrently": "^6.3.0",
+        "dotenv": "^8.6.0",
         "morgan": "^1.10.0",
-        "nodemon": "^2.0.7"
+        "nodemon": "^2.0.14"
     }
 }
