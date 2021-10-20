@@ -14,7 +14,7 @@ const auth = {
   // @Desc    Register new user
   // @Route   /api/auth/register
   // @Access  Public
-  register: async (firstName, lastName, email, password) => {
+  register: async (firstName, lastName, email, password, isAdmin) => {
     const firstNameTrim = firstName.trim();
     const lastNameTrim = lastName.trim();
     const emailTrim = email.trim();
@@ -38,6 +38,7 @@ const auth = {
       lastName: lastNameTrim,
       email: emailTrim,
       password: passwordTrim,
+      isAdmin: isAdmin ? true : false,
     });
 
     // save user

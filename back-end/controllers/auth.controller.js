@@ -16,7 +16,8 @@ const controllers = {
       req.body.firstName,
       req.body.lastName,
       req.body.email,
-      req.body.password
+      req.body.password,
+      req.body.isAdmin,
     );
 
     return res.json(registerService);
