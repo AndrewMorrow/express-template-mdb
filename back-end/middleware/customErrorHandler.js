@@ -6,8 +6,8 @@ const notFound = (req, res, next) => {
 };
 
 // create a custom error
-const createError = (message, errMsg, statusCode) => {
-  const err = new Error(message);
+const createError = (errTitle, errMsg, statusCode) => {
+  const err = new Error(errTitle);
   err.errors = { error: errMsg };
   err.statusCode = statusCode;
   return err;
